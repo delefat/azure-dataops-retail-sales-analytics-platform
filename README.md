@@ -52,7 +52,8 @@ The infrastructure deployment provisions the following Azure services:
 
 ### Primary Deployment Method
 
-The production implementation uses **Terraform** as the primary deployment mechanism, while **Bicep** templates are included to demonstrate Azure-native deployment capabilities.
+- **Bicep** is used as the primary deployment method for the Azure implementation.
+- **Terraform** is included to demonstrate equivalent cloud infrastructure provisioning capability.
 
 This approach showcases enterprise Infrastructure-as-Code practices and supports repeatable, automated environment provisioning.
 
