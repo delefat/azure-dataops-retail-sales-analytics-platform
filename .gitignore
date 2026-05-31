@@ -216,3 +216,16 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Dataset files
+data/sample/*.xlsx
+data/sample/*.csv
+data/sample/*.parquet
+
+# Databricks output
+bronze/
+silver/
+gold/
+
+# Local configuration
+.env
