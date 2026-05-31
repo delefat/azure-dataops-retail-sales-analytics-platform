@@ -10,6 +10,15 @@
     },
     "projectName": {
       "value": "retaildataops"
+    },
+    "synapseSqlAdminLogin": {
+      "value": "sqladminuser"
+    },
+    "synapseLocation": {
+      "value": "northeurope"
+    },
+    "synapseSqlAdminPassword": {
+      "value": "Replace-With-A-Strong-Password123!"
     }
   }
 }
