@@ -27,3 +27,32 @@ The architecture and engineering practices were inspired by industry-standard Az
 
 All implementation, documentation, customization, deployment automation, testing strategy, and business use cases in this repository were developed specifically for this portfolio project.
 
+
+## Infrastructure as Code
+
+This project demonstrates Infrastructure-as-Code (IaC) using both Microsoft-native and cloud-agnostic deployment approaches.
+
+### Deployment Options
+
+* **Bicep** – Microsoft-native Infrastructure-as-Code for Azure resources
+* **Terraform** – Industry-standard multi-cloud Infrastructure-as-Code platform
+
+### Azure Resources Deployed
+
+The infrastructure deployment provisions the following Azure services:
+
+* Azure Resource Group
+* Azure Data Lake Storage Gen2 (ADLS Gen2)
+* Raw, Bronze, Silver and Gold storage containers
+* Azure Data Factory
+* Azure Databricks Workspace
+* Azure Key Vault
+* Azure Log Analytics Workspace
+* Managed Identity and Role-Based Access Control (RBAC)
+
+### Primary Deployment Method
+
+The production implementation uses **Terraform** as the primary deployment mechanism, while **Bicep** templates are included to demonstrate Azure-native deployment capabilities.
+
+This approach showcases enterprise Infrastructure-as-Code practices and supports repeatable, automated environment provisioning.
+
