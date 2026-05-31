@@ -38,13 +38,6 @@ The dataset contains transactional sales information including:
 * Unit prices
 * Country information
 
-1. Invoice information
-2. Product information
-3. Customer information
-4. Transaction dates
-5. Quantity sold
-6. Unit prices
-7. Country information
 
 ## Repository Policy
 
