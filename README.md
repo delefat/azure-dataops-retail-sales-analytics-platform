@@ -2,58 +2,312 @@
 
 ## Project Overview
 
-This project is an original Azure DataOps portfolio implementation inspired by the modern data warehouse engineering patterns, using Azure Data Factory, Databricks, Azure Data Lake Storage Gen2 (ADLS Gen2), Azure Synapse Analytics, Power BI, CI/CD, testing, monitoring, and data governance.
+This project is an end-to-end Azure DataOps and Modern Data Platform implementation built using Microsoft Azure services and DataOps engineering best practices.
 
-The solution demonstrates how enterprise organizations can build a scalable, secure, and automated data platform to ingest, transform, store, and analyze retail sales data using Microsoft Azure services and DataOps best practices.
+The solution demonstrates how enterprise organisations can build a scalable, secure, governed, and automated analytics platform to ingest, process, store, and analyse retail sales data using a Lakehouse architecture, Infrastructure-as-Code, CI/CD automation, testing frameworks, monitoring, and business intelligence reporting.
+
+The project uses the Online Retail II dataset and implements a complete Medallion Architecture (Bronze, Silver, Gold) deployed on Azure.
+
+---
 
 ## Business Scenario
 
-A fictional retail organization requires a modern cloud data platform to:
+A fictional retail organisation requires a modern cloud data platform capable of:
 
-- Ingest sales, customer, product, and store data
-- Implement a Medallion Architecture (Bronze, Silver, Gold)
-- Support business intelligence and analytics
-- Automate deployments through CI/CD
-- Enforce data quality and governance
-- Monitor platform performance and reliability
+* Ingesting retail sales transactions
+* Storing data within a secure Azure Data Lakehouse
+* Implementing Bronze, Silver and Gold data layers
+* Providing curated business-ready datasets
+* Supporting self-service analytics and reporting
+* Automating infrastructure deployment
+* Enforcing data quality and governance
+* Monitoring platform performance and operational health
+* Supporting Dev, Staging and Production environments
 
+---
 
+## Solution Architecture
+
+The platform follows a modern Azure DataOps architecture:
+
+Raw Data Source
+
+↓
+
+Azure Data Lake Storage Gen2
+
+↓
+
+Databricks Bronze Layer
+
+↓
+
+Databricks Silver Layer
+
+↓
+
+Databricks Gold Layer
+
+↓
+
+Azure Synapse Analytics (Serverless SQL)
+
+↓
+
+Power BI
+
+### Azure Services Used
+
+* Azure Data Lake Storage Gen2 (ADLS Gen2)
+* Azure Databricks Premium Workspace
+* Unity Catalog
+* Azure Synapse Analytics
+* Azure Data Factory
+* Azure Key Vault
+* Azure Log Analytics
+* Azure Monitor
+* Azure DevOps
+* GitHub Actions
+* Power BI
+
+---
+
+## Medallion Architecture
+
+### Bronze Layer
+
+Purpose:
+
+* Raw data ingestion
+* Minimal transformations
+* Historical preservation
+* Auditability
+
+Example:
+
+* online_retail_transactions
+
+### Silver Layer
+
+Purpose:
+
+* Data cleansing
+* Standardisation
+* Business rule implementation
+* Data quality enforcement
+
+Transformations:
+
+* Customer ID standardisation
+* Country standardisation
+* Sales amount calculation
+* Transaction type classification
+* Duplicate removal
+
+### Gold Layer
+
+Purpose:
+
+* Business-ready analytics datasets
+* Reporting optimisation
+* Aggregated KPI generation
+
+Gold Outputs:
+
+* Sales By Country
+* Sales By Product
+* Monthly Sales
+* Top Customers
+
+---
+
+## Infrastructure as Code
+
+This project demonstrates Infrastructure-as-Code using both Microsoft-native and industry-standard deployment approaches.
+
+### Deployment Options
+
+#### Bicep
+
+Microsoft-native Infrastructure-as-Code used as the primary deployment mechanism.
+
+#### Terraform
+
+Industry-standard multi-cloud Infrastructure-as-Code implementation included to demonstrate equivalent infrastructure provisioning capabilities.
+
+---
+
+## Azure Resources Deployed
+
+The infrastructure deployment provisions:
+
+* Azure Resource Group
+* Azure Data Lake Storage Gen2
+* Raw Container
+* Bronze Container
+* Silver Container
+* Gold Container
+* Azure Databricks Workspace
+* Azure Synapse Analytics Workspace
+* Azure Data Factory
+* Azure Key Vault
+* Azure Log Analytics Workspace
+* User Assigned Managed Identity
+* Azure Databricks Access Connector
+* Unity Catalog Storage Credential
+* Unity Catalog External Location
+* Unity Catalog Volume
+* Role-Based Access Control (RBAC)
+
+---
+
+## Environment Strategy
+
+The solution supports multiple deployment environments:
+
+### Development
+
+* parameters.dev.json
+
+### Staging
+
+* parameters.stg.json
+
+### Production
+
+* parameters.prod.json
+
+Environment deployments are automated through Infrastructure-as-Code templates.
+
+---
+
+## Data Orchestration
+
+Azure Data Factory orchestrates the end-to-end processing workflow:
+
+ADF Pipeline
+
+↓
+
+Bronze Ingestion Notebook
+
+↓
+
+Silver Transformation Notebook
+
+↓
+
+Gold Aggregation Notebook
+
+↓
+
+Synapse Analytics Serving Layer
+
+---
+
+## Analytics Layer
+
+Azure Synapse Analytics Serverless SQL is used as the enterprise serving layer.
+
+The Gold Delta datasets are exposed through:
+
+* vw_sales_by_country
+* vw_sales_by_product
+* vw_monthly_sales
+* vw_top_customers
+
+These views are consumed directly by Power BI.
+
+---
+
+## Reporting Layer
+
+Power BI provides business reporting and analytics dashboards including:
+
+* Executive Sales Dashboard
+* Monthly Sales Trends
+* Country Performance Analysis
+* Product Performance Analysis
+* Top Customer Analysis
+* Return Transaction Analysis
+
+---
+
+## CI/CD
+
+The project demonstrates enterprise deployment automation using:
+
+### GitHub Actions
+
+* Bicep validation
+* Infrastructure deployment
+* Automated testing
+
+### Azure DevOps
+
+* Multi-stage deployment pipelines
+* Infrastructure promotion
+* Environment management
+
+---
+
+## Testing Strategy
+
+The project includes:
+
+### Unit Testing
+
+Validates transformation rules and business logic.
+
+### Data Quality Testing
+
+Validates data completeness, accuracy and consistency.
+
+### Integration Testing
+
+Validates Bronze, Silver and Gold pipeline outputs.
+
+---
+
+## Monitoring and Observability
+
+Monitoring capabilities include:
+
+* Azure Data Factory pipeline monitoring
+* Databricks job monitoring
+* Synapse query monitoring
+* Azure Monitor
+* Azure Log Analytics
+* Cost monitoring
+* Alerting and incident management
+
+---
+
+## Security and Governance
+
+Security controls include:
+
+* Managed Identity Authentication
+* Unity Catalog Governance
+* Azure RBAC
+* Azure Key Vault
+* Secure Storage Access
+* Principle of Least Privilege
+
+---
 
 ## Credits and Inspiration
 
 This project was designed and implemented as an independent portfolio solution.
 
-The architecture and engineering practices were inspired by industry-standard Azure DataOps, Data Lakehouse, and Modern Data Warehouse patterns, including publicly available Microsoft reference architectures and Azure best-practice guidance.
+The architecture and engineering practices were inspired by industry-standard Azure DataOps, Data Lakehouse, and Modern Data Warehouse patterns, including Microsoft reference architectures and Azure best-practice guidance.
 
-All implementation, documentation, customization, deployment automation, testing strategy, and business use cases in this repository were developed specifically for this portfolio project.
+All implementation, documentation, infrastructure code, deployment automation, testing strategy, monitoring design, and business use cases were developed specifically for this portfolio project.
 
+---
 
-## Infrastructure as Code
+## Author
 
-This project demonstrates Infrastructure-as-Code (IaC) using both Microsoft-native and cloud-agnostic deployment approaches.
+Dele Fatoba
 
-### Deployment Options
-
-* **Bicep** – Microsoft-native Infrastructure-as-Code for Azure resources
-* **Terraform** – Industry-standard multi-cloud Infrastructure-as-Code platform
-
-### Azure Resources Deployed
-
-The infrastructure deployment provisions the following Azure services:
-
-* Azure Resource Group
-* Azure Data Lake Storage Gen2 (ADLS Gen2)
-* Raw, Bronze, Silver and Gold storage containers
-* Azure Data Factory
-* Azure Databricks Workspace
-* Azure Key Vault
-* Azure Log Analytics Workspace
-* Managed Identity and Role-Based Access Control (RBAC)
-
-### Primary Deployment Method
-
-- **Bicep** is used as the primary deployment method for the Azure implementation.
-- **Terraform** is included to demonstrate equivalent cloud infrastructure provisioning capability.
-
-This approach showcases enterprise Infrastructure-as-Code practices and supports repeatable, automated environment provisioning.
-
+Azure Data Engineer | Microsoft Certified Data Engineer | DataOps Practitioner
