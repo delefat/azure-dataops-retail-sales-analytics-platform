@@ -28,6 +28,8 @@ A fictional retail organisation requires a modern cloud data platform capable of
 
 ## Solution Architecture
 
+![Azure DataOps Architecture](docs/architecture/azure-dataops-architecture.png)
+
 The platform follows a modern Azure DataOps architecture:
 
 Raw Data Source
