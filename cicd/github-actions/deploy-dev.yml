@@ -1,0 +1,34 @@
+name: Deploy Development Environment
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  deploy-dev:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy Resource Group
+        run: |
+          az group create \
+            --name rg-retail-dataops-dev \
+            --location uksouth
+
+      - name: Deploy Bicep
+        run: |
+          az deployment group create \
+            --resource-group rg-retail-dataops-dev \
+            --template-file infrastructure/bicep/main.bicep \
+            --parameters infrastructure/bicep/parameters.dev.json
