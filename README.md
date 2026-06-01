@@ -308,6 +308,47 @@ All implementation, documentation, infrastructure code, deployment automation, t
 
 ## Author
 
-Dele Fatoba
+### Dele Fatoba
 
 Azure Data Engineer | Microsoft Certified Data Engineer | DataOps Practitioner
+
+Experienced Data Engineering professional with expertise in Azure Data Platform technologies, modern data architectures, cloud analytics, Infrastructure-as-Code, automation, and enterprise reporting solutions.
+
+Specialising in Azure Data Factory, Azure Databricks, Azure Synapse Analytics, Power BI, DataOps, CI/CD, and modern Lakehouse architectures.
+
+
+## Connect With Me
+
+Thank you for taking the time to explore this project.
+
+I am passionate about designing and implementing modern data platforms using Microsoft Azure, DataOps, Analytics Engineering, and Cloud Data Architecture. This repository represents a practical implementation of enterprise-grade data engineering concepts, including Infrastructure-as-Code, CI/CD automation, data quality frameworks, orchestration, monitoring, and business intelligence solutions.
+
+If you would like to learn more about my work, discuss Azure Data Engineering, DataOps, Analytics, Cloud Architecture, or explore professional collaboration opportunities, I would be delighted to connect.
+
+### Portfolio Website
+
+Explore my portfolio, projects, technical case studies, and professional experience:
+
+**Portfolio:** https://sites.google.com/view/delefatoba/home
+
+### Email
+
+For professional enquiries, collaboration opportunities, consulting engagements, or technical discussions:
+
+**Email:** [delefatob@yahoo.co.uk](mailto:delefatob@yahoo.co.uk)
+
+### Areas of Interest
+
+* Azure Data Engineering
+* Azure Data Factory
+* Azure Databricks
+* Azure Synapse Analytics
+* DataOps and DevOps
+* Data Warehousing and Lakehouse Architectures
+* Power BI and Business Intelligence
+* Cloud Data Platforms
+* Analytics Engineering
+* Infrastructure as Code (Bicep & Terraform)
+* AI-Powered Data Engineering
+
+Thank you for visiting this repository. Feedback, suggestions, and professional networking opportunities are always welcome.
