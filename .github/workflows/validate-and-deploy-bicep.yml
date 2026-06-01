@@ -1,0 +1,70 @@
+name: Validate and Deploy Bicep
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/bicep/**'
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  RESOURCE_GROUP: rg-retail-dataops-dev
+  LOCATION: uksouth
+
+jobs:
+  validate:
+    name: Validate Bicep
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Validate Bicep
+        run: |
+          az deployment group validate \
+            --resource-group $RESOURCE_GROUP \
+            --template-file infrastructure/bicep/main.bicep \
+            --parameters infrastructure/bicep/parameters.dev.json
+
+  deploy:
+    name: Deploy Bicep
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.event_name == 'workflow_dispatch'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Create Resource Group
+        run: |
+          az group create \
+            --name $RESOURCE_GROUP \
+            --location $LOCATION
+
+      - name: Deploy Bicep
+        run: |
+          az deployment group create \
+            --resource-group $RESOURCE_GROUP \
+            --template-file infrastructure/bicep/main.bicep \
+            --parameters infrastructure/bicep/parameters.dev.json
