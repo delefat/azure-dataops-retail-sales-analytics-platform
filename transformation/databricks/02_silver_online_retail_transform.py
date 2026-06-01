@@ -15,27 +15,19 @@ from pyspark.sql.functions import (
     when
 )
 
+# COMMAND ----------
 
-storage_account = "retaildataopsdevv4ptce"
+bronze_table_name = "retail_dataops.bronze.online_retail_transactions"
+silver_table_name = "retail_dataops.silver.online_retail_transactions"
 
-bronze_path = (
-    f"abfss://bronze@{storage_account}.dfs.core.windows.net/"
-    "online-retail/transactions"
-)
+# COMMAND ----------
 
-silver_path = (
-    f"abfss://silver@{storage_account}.dfs.core.windows.net/"
-    "online-retail/transactions"
-)
-
-
-
-bronze_df = spark.read.format("delta").load(bronze_path)
+bronze_df = spark.table(bronze_table_name)
 
 display(bronze_df.limit(20))
 bronze_df.printSchema()
 
-
+# COMMAND ----------
 
 silver_df = (
     bronze_df
@@ -49,7 +41,7 @@ silver_df = (
     .withColumnRenamed("Country", "country")
 )
 
-
+# COMMAND ----------
 
 silver_df = (
     silver_df
@@ -69,7 +61,7 @@ silver_df = (
     .withColumn("silver_processed_timestamp", current_timestamp())
 )
 
-
+# COMMAND ----------
 
 silver_df = (
     silver_df
@@ -80,21 +72,30 @@ silver_df = (
     .dropDuplicates(["invoice_no", "stock_code", "invoice_date", "customer_id"])
 )
 
-
+# COMMAND ----------
 
 display(silver_df.limit(20))
 silver_df.printSchema()
 
-print(f"Silver record count: {silver_df.count()}")
+print(f"Silver record count: {silver_df.count():,}")
 
+# COMMAND ----------
 
+spark.sql("CREATE SCHEMA IF NOT EXISTS retail_dataops.silver")
 
 (
     silver_df.write
     .format("delta")
     .mode("overwrite")
     .option("overwriteSchema", "true")
-    .save(silver_path)
+    .saveAsTable(silver_table_name)
 )
 
-print(f"Silver Delta created at: {silver_path}")
+print(f"Silver Delta table created: {silver_table_name}")
+
+# COMMAND ----------
+
+display(
+    spark.table(silver_table_name)
+    .limit(20)
+)
