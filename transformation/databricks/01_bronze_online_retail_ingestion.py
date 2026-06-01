@@ -1,53 +1,41 @@
 # Databricks notebook source
 # ============================================================
 # Notebook: 01_bronze_online_retail_ingestion
-# Purpose: Load Online Retail II CSV into Bronze Delta layer
+# Purpose: Load Online Retail II CSV from Unity Catalog Volume
+#          into Bronze Delta table
 # Author: Dele Fatoba
 # ============================================================
 
 from pyspark.sql.functions import current_timestamp, input_file_name
 
+# COMMAND ----------
 
-storage_account = "retaildataopsdevv4ptce"
+# Source file in Unity Catalog Volume
+# This volume points to ADLS Gen2 through:
+# Storage Credential -> External Location -> External Volume
 
-
-storage_key = dbutils.secrets.get(
-scope="dataopsecretscope",
-key="storage-account-key"
+source_file_path = (
+    "/Volumes/retail_dataops/raw/online_retail_volume/"
+    "online_retail_II.csv"
 )
 
-# Configure Spark to access ADLS Gen2
+# Bronze managed Delta table in Unity Catalog
 
-spark.conf.set(
-f"fs.azure.account.key.{storage_account}.dfs.core.windows.net",
-storage_key
-)
+bronze_table_name = "retail_dataops.bronze.online_retail_transactions"
 
-# Test connectivity to ADLS
+# COMMAND ----------
+
+# Validate source file path
 
 display(
-dbutils.fs.ls(
-f"abfss://raw@{storage_account}.dfs.core.windows.net/"
-)
-)
-
-#Source CSV File
-
-raw_file_path = (
-    f"abfss://raw@{storage_account}.dfs.core.windows.net/"
-    "online-retail/online_retail_II.csv"
+    dbutils.fs.ls(
+        "/Volumes/retail_dataops/raw/online_retail_volume/"
+    )
 )
 
+# COMMAND ----------
 
-# Bronze Output Path
-
-bronze_output_path = (
-    f"abfss://bronze@{storage_account}.dfs.core.windows.net/"
-    "online-retail/transactions"
-)
-
-
-# Read CSV
+# Read CSV from Unity Catalog Volume
 
 bronze_df = (
     spark.read
@@ -55,34 +43,45 @@ bronze_df = (
     .option("inferSchema", "true")
     .option("multiLine", "true")
     .option("escape", "\"")
-    .csv(raw_file_path)
+    .csv(source_file_path)
     .withColumn("ingestion_timestamp", current_timestamp())
     .withColumn("source_file", input_file_name())
 )
 
-
+# COMMAND ----------
 
 display(bronze_df.limit(20))
+
 bronze_df.printSchema()
-print(f"Bronze record count: {bronze_df.count()}")
 
+print(f"Bronze record count: {bronze_df.count():,}")
 
+# COMMAND ----------
+
+# Create Bronze schema if it does not exist
+
+spark.sql("CREATE CATALOG IF NOT EXISTS retail_dataops")
+spark.sql("CREATE SCHEMA IF NOT EXISTS retail_dataops.bronze")
+
+# COMMAND ----------
+
+# Write Bronze Delta table as a Unity Catalog managed table
 
 (
     bronze_df.write
     .format("delta")
     .mode("overwrite")
     .option("overwriteSchema", "true")
-    .save(bronze_output_path)
+    .saveAsTable(bronze_table_name)
 )
 
-print(f"Bronze Delta created at: {bronze_output_path}")
+print(f"Bronze Delta table created: {bronze_table_name}")
 
-Verify Bronze Output
+# COMMAND ----------
+
+# Verify Bronze table
 
 display(
-spark.read
-.format("delta")
-.load(bronze_output_path)
-.limit(20)
+    spark.table(bronze_table_name)
+    .limit(20)
 )
