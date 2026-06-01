@@ -1,0 +1,57 @@
+trigger:
+  branches:
+    include:
+      - main
+
+variables:
+  resourceGroupName: 'rg-retail-dataops-dev'
+  location: 'uksouth'
+  templateFile: 'infrastructure/bicep/main.bicep'
+  parametersFile: 'infrastructure/bicep/parameters.dev.json'
+
+stages:
+  - stage: Validate
+    displayName: Validate Infrastructure
+    jobs:
+      - job: ValidateBicep
+        displayName: Validate Bicep Template
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: AzureCLI@2
+            displayName: Validate Bicep
+            inputs:
+              azureSubscription: 'YOUR_AZURE_SERVICE_CONNECTION'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az deployment group validate \
+                  --resource-group $(resourceGroupName) \
+                  --template-file $(templateFile) \
+                  --parameters $(parametersFile)
+
+  - stage: DeployDev
+    displayName: Deploy Development Environment
+    dependsOn: Validate
+    condition: succeeded()
+    jobs:
+      - job: DeployBicep
+        displayName: Deploy Bicep
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: AzureCLI@2
+            displayName: Deploy Azure Resources
+            inputs:
+              azureSubscription: 'YOUR_AZURE_SERVICE_CONNECTION'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              inlineScript: |
+                az group create \
+                  --name $(resourceGroupName) \
+                  --location $(location)
+
+                az deployment group create \
+                  --resource-group $(resourceGroupName) \
+                  --template-file $(templateFile) \
+                  --parameters $(parametersFile)
