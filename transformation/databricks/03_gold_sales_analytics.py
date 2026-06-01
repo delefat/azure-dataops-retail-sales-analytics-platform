@@ -9,34 +9,24 @@ from pyspark.sql.functions import (
     col,
     sum as spark_sum,
     countDistinct,
-    count,
     year,
     month,
     round as spark_round
 )
 
-storage_account = "retaildataopsdevv4ptce
+silver_table_name = "retail_dataops.silver.online_retail_transactions"
 
-silver_path = (
-    f"abfss://silver@{storage_account}.dfs.core.windows.net/"
-    "online-retail/transactions"
-)
+gold_sales_by_country_table = "retail_dataops.gold.sales_by_country"
+gold_sales_by_product_table = "retail_dataops.gold.sales_by_product"
+gold_monthly_sales_table = "retail_dataops.gold.monthly_sales"
+gold_top_customers_table = "retail_dataops.gold.top_customers"
 
-gold_base_path = (
-    f"abfss://gold@{storage_account}.dfs.core.windows.net/"
-    "online-retail"
-)
-
-
-sales_df = spark.read.format("delta").load(silver_path)
+sales_df = spark.table(silver_table_name)
 
 display(sales_df.limit(20))
-
-
+sales_df.printSchema()
 
 sales_only_df = sales_df.filter(col("transaction_type") == "SALE")
-
-
 
 sales_by_country = (
     sales_only_df
@@ -49,8 +39,6 @@ sales_by_country = (
     .orderBy(col("total_sales").desc())
 )
 
-
-
 sales_by_product = (
     sales_only_df
     .groupBy("stock_code", "product_description")
@@ -61,8 +49,6 @@ sales_by_product = (
     )
     .orderBy(col("total_sales").desc())
 )
-
-
 
 monthly_sales = (
     sales_only_df
@@ -77,8 +63,6 @@ monthly_sales = (
     .orderBy("sales_year", "sales_month")
 )
 
-
-
 top_customers = (
     sales_only_df
     .filter(col("customer_id").isNotNull())
@@ -90,10 +74,16 @@ top_customers = (
     .orderBy(col("customer_total_sales").desc())
 )
 
+spark.sql("CREATE SCHEMA IF NOT EXISTS retail_dataops.gold")
 
-sales_by_country.write.format("delta").mode("overwrite").save(f"{gold_base_path}/sales_by_country")
-sales_by_product.write.format("delta").mode("overwrite").save(f"{gold_base_path}/sales_by_product")
-monthly_sales.write.format("delta").mode("overwrite").save(f"{gold_base_path}/monthly_sales")
-top_customers.write.format("delta").mode("overwrite").save(f"{gold_base_path}/top_customers")
+sales_by_country.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable(gold_sales_by_country_table)
+sales_by_product.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable(gold_sales_by_product_table)
+monthly_sales.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable(gold_monthly_sales_table)
+top_customers.write.format("delta").mode("overwrite").option("overwriteSchema", "true").saveAsTable(gold_top_customers_table)
 
 print("Gold Delta tables created successfully.")
+
+display(spark.table(gold_sales_by_country_table).limit(20))
+display(spark.table(gold_sales_by_product_table).limit(20))
+display(spark.table(gold_monthly_sales_table).limit(20))
+display(spark.table(gold_top_customers_table).limit(20))
