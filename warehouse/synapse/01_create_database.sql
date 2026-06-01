@@ -1,0 +1,8 @@
+CREATE DATABASE RetailDataOps;
+GO
+
+USE RetailDataOps;
+GO
+
+CREATE SCHEMA gold;
+GO
