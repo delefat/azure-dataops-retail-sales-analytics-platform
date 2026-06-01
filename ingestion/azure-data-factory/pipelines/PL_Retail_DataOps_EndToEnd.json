@@ -1,0 +1,80 @@
+{
+  "name": "PL_Retail_DataOps_EndToEnd",
+  "properties": {
+    "description": "Orchestrates Bronze, Silver and Gold Databricks notebooks for the Online Retail II Azure DataOps platform.",
+    "activities": [
+      {
+        "name": "NB_01_Bronze_Ingestion",
+        "type": "DatabricksNotebook",
+        "dependsOn": [],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 120,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "notebookPath": "/Repos/dele/azure-dataops-retail-sales-analytics-platform/transformation/databricks/01_bronze_online_retail_ingestion"
+        },
+        "linkedServiceName": {
+          "referenceName": "LS_Azure_Databricks",
+          "type": "LinkedServiceReference"
+        }
+      },
+      {
+        "name": "NB_02_Silver_Transform",
+        "type": "DatabricksNotebook",
+        "dependsOn": [
+          {
+            "activity": "NB_01_Bronze_Ingestion",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 120,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "notebookPath": "/Repos/dele/azure-dataops-retail-sales-analytics-platform/transformation/databricks/02_silver_online_retail_transform"
+        },
+        "linkedServiceName": {
+          "referenceName": "LS_Azure_Databricks",
+          "type": "LinkedServiceReference"
+        }
+      },
+      {
+        "name": "NB_03_Gold_Aggregation",
+        "type": "DatabricksNotebook",
+        "dependsOn": [
+          {
+            "activity": "NB_02_Silver_Transform",
+            "dependencyConditions": ["Succeeded"]
+          }
+        ],
+        "policy": {
+          "timeout": "0.12:00:00",
+          "retry": 2,
+          "retryIntervalInSeconds": 120,
+          "secureOutput": false,
+          "secureInput": false
+        },
+        "typeProperties": {
+          "notebookPath": "/Repos/dele/azure-dataops-retail-sales-analytics-platform/transformation/databricks/03_gold_sales_analytics"
+        },
+        "linkedServiceName": {
+          "referenceName": "LS_Azure_Databricks",
+          "type": "LinkedServiceReference"
+        }
+      }
+    ],
+    "annotations": [
+      "Azure DataOps",
+      "Retail Analytics",
+      "Bronze Silver Gold"
+    ]
+  }
+}
