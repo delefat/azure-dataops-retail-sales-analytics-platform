@@ -192,9 +192,44 @@ resource adfStorageRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
   }
 }
 
+resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-01-31' = {
+  name: 'id-databricks-storage-${environment}-${suffix}'
+  location: location
+  tags: commonTags
+}
+
+resource databricksAccessConnector 'Microsoft.Databricks/accessConnectors@2023-05-01' = {
+  name: 'ac-databricks-storage-${environment}-${suffix}'
+  location: location
+  tags: commonTags
+  identity: {
+    type: 'UserAssigned'
+    userAssignedIdentities: {
+      '${userAssignedIdentity.id}': {}
+    }
+  }
+  properties: {}
+}
+
+resource storageBlobContributorRole 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
+  name: guid(storageAccount.id, userAssignedIdentity.id, 'Storage Blob Data Contributor')
+  scope: storageAccount
+  properties: {
+    roleDefinitionId: subscriptionResourceId(
+      'Microsoft.Authorization/roleDefinitions',
+      'ba92f5b4-2d11-453d-a403-e96b0029c9fe'
+    )
+    principalId: userAssignedIdentity.properties.principalId
+    principalType: 'ServicePrincipal'
+  }
+}
+
 output storageAccountName string = storageAccount.name
 output dataFactoryName string = dataFactory.name
 output databricksWorkspaceName string = databricks.name
 output keyVaultName string = keyVault.name
 output logAnalyticsWorkspaceName string = logAnalytics.name
 output synapseWorkspaceName string = synapseWorkspace.name
+output userAssignedIdentityId string = userAssignedIdentity.id
+output accessConnectorId string = databricksAccessConnector.id
+
