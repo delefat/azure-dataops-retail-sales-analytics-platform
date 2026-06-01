@@ -5,7 +5,7 @@ param location string = resourceGroup().location
 @allowed([
   'dev'
   'stg'
-  'prod'
+  'prd'
 ])
 param environment string = 'dev'
 
@@ -20,7 +20,7 @@ param synapseSqlAdminLogin string = 'sqladminuser'
 param synapseSqlAdminPassword string
 
 @description('Synapse workspace location')
-param synapseLocation string = 'northeurope'
+param synapseLocation string = 'centralindia'
 
 var suffix = take(uniqueString(resourceGroup().id), 6)
 

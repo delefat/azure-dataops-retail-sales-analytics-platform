@@ -7,27 +7,23 @@
 
 from pyspark.sql.functions import current_timestamp, input_file_name
 
-# COMMAND ----------
 
 storage_account = "retaildataopsdevv4ptce"
 
-Retrieve Storage Account Key from Azure Key Vault-backed
-Databricks Secret Scope
 
 storage_key = dbutils.secrets.get(
 scope="dataopsecretscope",
 key="storage-account-key"
 )
 
-Configure Spark to access ADLS Gen2
+# Configure Spark to access ADLS Gen2
 
 spark.conf.set(
 f"fs.azure.account.key.{storage_account}.dfs.core.windows.net",
 storage_key
 )
 
-COMMAND ----------
-Test connectivity to ADLS
+# Test connectivity to ADLS
 
 display(
 dbutils.fs.ls(
@@ -35,9 +31,7 @@ f"abfss://raw@{storage_account}.dfs.core.windows.net/"
 )
 )
 
-
-COMMAND ----------
-Source CSV File
+#Source CSV File
 
 raw_file_path = (
     f"abfss://raw@{storage_account}.dfs.core.windows.net/"
@@ -45,16 +39,15 @@ raw_file_path = (
 )
 
 
-Bronze Output Path
+# Bronze Output Path
 
 bronze_output_path = (
     f"abfss://bronze@{storage_account}.dfs.core.windows.net/"
     "online-retail/transactions"
 )
 
-# COMMAND ----------
 
-Read CSV
+# Read CSV
 
 bronze_df = (
     spark.read
@@ -67,13 +60,13 @@ bronze_df = (
     .withColumn("source_file", input_file_name())
 )
 
-# COMMAND ----------
+
 
 display(bronze_df.limit(20))
 bronze_df.printSchema()
 print(f"Bronze record count: {bronze_df.count()}")
 
-# COMMAND ----------
+
 
 (
     bronze_df.write

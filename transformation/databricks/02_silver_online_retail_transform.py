@@ -15,9 +15,8 @@ from pyspark.sql.functions import (
     when
 )
 
-# COMMAND ----------
 
-storage_account = "YOUR_STORAGE_ACCOUNT_NAME"
+storage_account = "retaildataopsdevv4ptce"
 
 bronze_path = (
     f"abfss://bronze@{storage_account}.dfs.core.windows.net/"
@@ -29,14 +28,14 @@ silver_path = (
     "online-retail/transactions"
 )
 
-# COMMAND ----------
+
 
 bronze_df = spark.read.format("delta").load(bronze_path)
 
 display(bronze_df.limit(20))
 bronze_df.printSchema()
 
-# COMMAND ----------
+
 
 silver_df = (
     bronze_df
@@ -50,7 +49,7 @@ silver_df = (
     .withColumnRenamed("Country", "country")
 )
 
-# COMMAND ----------
+
 
 silver_df = (
     silver_df
@@ -70,7 +69,7 @@ silver_df = (
     .withColumn("silver_processed_timestamp", current_timestamp())
 )
 
-# COMMAND ----------
+
 
 silver_df = (
     silver_df
@@ -81,14 +80,14 @@ silver_df = (
     .dropDuplicates(["invoice_no", "stock_code", "invoice_date", "customer_id"])
 )
 
-# COMMAND ----------
+
 
 display(silver_df.limit(20))
 silver_df.printSchema()
 
 print(f"Silver record count: {silver_df.count()}")
 
-# COMMAND ----------
+
 
 (
     silver_df.write

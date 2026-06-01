@@ -15,9 +15,7 @@ from pyspark.sql.functions import (
     round as spark_round
 )
 
-# COMMAND ----------
-
-storage_account = "YOUR_STORAGE_ACCOUNT_NAME"
+storage_account = "retaildataopsdevv4ptce
 
 silver_path = (
     f"abfss://silver@{storage_account}.dfs.core.windows.net/"
@@ -29,17 +27,16 @@ gold_base_path = (
     "online-retail"
 )
 
-# COMMAND ----------
 
 sales_df = spark.read.format("delta").load(silver_path)
 
 display(sales_df.limit(20))
 
-# COMMAND ----------
+
 
 sales_only_df = sales_df.filter(col("transaction_type") == "SALE")
 
-# COMMAND ----------
+
 
 sales_by_country = (
     sales_only_df
@@ -52,7 +49,7 @@ sales_by_country = (
     .orderBy(col("total_sales").desc())
 )
 
-# COMMAND ----------
+
 
 sales_by_product = (
     sales_only_df
@@ -65,7 +62,7 @@ sales_by_product = (
     .orderBy(col("total_sales").desc())
 )
 
-# COMMAND ----------
+
 
 monthly_sales = (
     sales_only_df
@@ -80,7 +77,7 @@ monthly_sales = (
     .orderBy("sales_year", "sales_month")
 )
 
-# COMMAND ----------
+
 
 top_customers = (
     sales_only_df
@@ -93,7 +90,6 @@ top_customers = (
     .orderBy(col("customer_total_sales").desc())
 )
 
-# COMMAND ----------
 
 sales_by_country.write.format("delta").mode("overwrite").save(f"{gold_base_path}/sales_by_country")
 sales_by_product.write.format("delta").mode("overwrite").save(f"{gold_base_path}/sales_by_product")
